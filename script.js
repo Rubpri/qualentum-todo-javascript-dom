@@ -2,27 +2,42 @@ const input = document.querySelector("input");
 const addTaskButton = document.querySelector(".btn");
 const ul = document.querySelector("ul");
 
-const tasksArray = [];
-const tasksInfo = [];
-let id = 0;
+const taskListArray = [];
+let id = 1;
+
 
 addTaskButton.addEventListener("click", () => {
-
+    
     const task = input.value;
-
     if (task != "") {
 
-        tasksArray.push(task)
-        
-        tasksInfo.push(
+        taskListArray.push(
             {
-                "id": id,
-                "nombre": task,
-                "completada": false
+                taskId: id,
+                taskName: task,
+                active: false
             }
-        )  
+        )
+        id += 1
+        renderTaskList();
+        input.value = "";
+        console.log(taskListArray)
+    }
+})
 
-        id += 1;
+function deleteTask(taskId) {
+    const taskIndex = taskListArray.findIndex(task => task.taskId === taskId);
+    if (taskIndex !== -1) {
+        taskListArray.splice(taskIndex, 1);
+        renderTaskList();
+    }
+}
+
+function renderTaskList() {
+
+    ul.innerHTML = "";
+
+    for (let index = 0;  index < taskListArray.length; index++) {
         
         const li = document.createElement("li");
         const article = document.createElement("article");
@@ -30,7 +45,7 @@ addTaskButton.addEventListener("click", () => {
         checkbox.type = "checkbox";
         checkbox.className = "task-checkbox";
         const span = document.createElement("span");
-        span.textContent = task;
+        span.textContent = taskListArray[index].taskName;
         span.className = "task-text";
 
         ul.appendChild(li);
@@ -38,28 +53,19 @@ addTaskButton.addEventListener("click", () => {
         li.appendChild(article);
         article.appendChild(checkbox);
         article.appendChild(span);
-
         
-       
-        function deleteTask() {
+        function createDeleteButton(taskId) {
             const trash = document.createElement("i");
             trash.className = "fa fa-trash";
 
-            trash.addEventListener("click", (e) => {
-                const task = e.target.parentElement;
-                ul.removeChild(task)
-            })
+            trash.addEventListener("click", () => {
+                deleteTask(taskId);
+            });
 
             return trash;
         }
 
-        li.appendChild(deleteTask());
+        li.appendChild(createDeleteButton(taskListArray[index].taskId));
+    }
 
-        input.value = "";
-
-        
-        console.log(tasksInfo)
-        console.log(tasksArray)
-       
-    }  
-})
+}
