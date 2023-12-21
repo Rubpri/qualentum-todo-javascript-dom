@@ -21,7 +21,6 @@ addTaskButton.addEventListener("click", () => {
         id += 1
         renderTaskList();
         input.value = "";
-        console.log(taskListArray)
     }
 })
 
@@ -33,9 +32,19 @@ function deleteTask(taskId) {
     }
 }
 
+
+function toggleTaskActive(taskId) {
+    const taskIndex = taskListArray.findIndex(task => task.taskId === taskId);
+    if (taskIndex !== -1) {
+        taskListArray[taskIndex].active = !taskListArray[taskIndex].active;
+        renderTaskList();
+    }
+}
+
 function renderTaskList() {
 
     ul.innerHTML = "";
+    console.log(taskListArray)
 
     for (let index = 0;  index < taskListArray.length; index++) {
         
@@ -44,6 +53,13 @@ function renderTaskList() {
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.className = "task-checkbox";
+        checkbox.checked = taskListArray[index].active;
+
+        checkbox.addEventListener("change", () => {
+            toggleTaskActive(taskListArray[index].taskId);
+        });
+
+
         const span = document.createElement("span");
         span.textContent = taskListArray[index].taskName;
         span.className = "task-text";
